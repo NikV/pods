@@ -9,7 +9,7 @@
     <ul class="ul-disc">
         <li><?php _e('To learn more about using Pods, see the <a href="http://pods.io/docs/" target="_blank">documentation</a>, or our <a href="http://pods.io/tutorials/" target="_blank">tutorials section</a>', 'pods'); ?>.
 
-        <li><?php _e( 'To get help with a specific issue, you can ask in our <a href="http://pods.io/forums/" target="_blank">support forums</a>, or in <a href="http://pods.io/forums/chat/" target="_blank">our chat</a>', 'pods'); ?>.
+        <li><?php _e( 'To get help with a specific issue, you can ask in our <a href="http://pods.io/forums/" target="_blank">support forums</a>, or in <a href="http://pods.io/forums/chat/" target="_blank">our chat</a>', 'pods' ); ?>.
 
         <li><?php _e('To report <strong>bugs or request features</strong>, go to our <a href="https://github.com/pods-framework/pods/issues?sort=updated&direction=desc&state=open" target="_blank">GitHub</a>.', 'pods' ); ?></li>
 
