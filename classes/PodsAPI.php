@@ -2489,27 +2489,42 @@ class PodsAPI {
             }
         }
 
-        if ( !empty( $old_id ) && 'meta' == $pod[ 'storage' ] && $old_name != $field[ 'name' ] && $pod[ 'meta_table' ] != $pod[ 'table' ] ) {
+        if ( !empty( $old_id ) && $old_name != $field[ 'name' ] ) {
             $prepare = array(
                 $field[ 'name' ],
                 $old_name
             );
 
             // Users don't have a type
-            if ( !empty( $pod[ 'field_type' ] ) )
+            if ( !empty( $pod[ 'field_type' ] ) ) {
                 $prepare[] = $pod[ 'name' ];
+            }
+            
+            if (  'meta' == $pod[ 'storage' ] && $pod[ 'meta_table' ] != $pod[ 'table' ] ) {
+            	pods_query( "
+	                UPDATE `{$pod[ 'meta_table' ]}` AS `m`
+	                LEFT JOIN `{$pod[ 'table' ]}` AS `t`
+	                    ON `t`.`{$pod[ 'field_id' ]}` = `m`.`{$pod[ 'meta_field_id' ]}`
+	                SET
+	                    `m`.`{$pod[ 'meta_field_index' ]}` = %s
+	                WHERE
+	                    `m`.`{$pod[ 'meta_field_index' ]}` = %s
+	            " . ( !empty( $pod[ 'field_type' ] ) ? " AND `t`.`{$pod[ 'field_type' ]}` = %s" : "" ),
+	                $prepare
+	            );
+            }
+            
+            if ('settings' == $pod[ 'type' ] ) {
+            	$value = get_option( $pod_name . '_' . $field_name );
 
-            pods_query( "
-                UPDATE `{$pod[ 'meta_table' ]}` AS `m`
-                LEFT JOIN `{$pod[ 'table' ]}` AS `t`
-                    ON `t`.`{$pod[ 'field_id' ]}` = `m`.`{$pod[ 'meta_field_id' ]}`
-                SET
-                    `m`.`{$pod[ 'meta_field_index' ]}` = %s
-                WHERE
-                    `m`.`{$pod[ 'meta_field_index' ]}` = %s
-            " . ( !empty( $pod[ 'field_type' ] ) ? " AND `t`.`{$pod[ 'field_type' ]}` = %s" : "" ),
-                $prepare
-            );
+		delete_option( $pod_name . '_' . $field_name );
+		
+		if ( '' !== $value ) {
+		    add_option( $pod_name . '_' . $new_field_name, $value, '', 'no' );
+		}
+            }
+            
+            
         }
 
         if ( $field[ 'type' ] != $old_type && in_array( $old_type, $tableless_field_types ) ) {
